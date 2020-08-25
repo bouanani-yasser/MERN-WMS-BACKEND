@@ -3,18 +3,11 @@ const { check } = require('express-validator');
 
 const usersController = require('../controllers/users-controllers');
 const fileUpload = require('../middleware/file-upload');
-
-// var multer = require('multer');
-// var upload = multer({ dest: 'uploads/' });
+const checkAuth = require('../middleware/check-auth');
+const User = require('../models/user');
 
 const router = express.Router();
 
-// router.get('/', usersController.getUsers);
-
-router.post('/upload', fileUpload.single('file'), (req, res, next) => {
-   res.json({ file: req.file.originalname });
-   next();
-});
 router.post(
    '/signup',
    [
@@ -26,5 +19,11 @@ router.post(
 );
 
 router.post('/login', usersController.login);
+
+router.use(checkAuth);
+
+router.post('/upload', fileUpload.single('file'), (req, res) => {
+   return res.json({ file: req.file.originalname });
+});
 
 module.exports = router;

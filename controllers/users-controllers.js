@@ -1,3 +1,5 @@
+var fs = require('fs');
+
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -90,6 +92,10 @@ const signup = async (req, res, next) => {
       return next(error);
    }
 
+   let dir = './uploads/' + createdUser.email;
+   if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+   }
    res.status(201).json({
       userId: createdUser.id,
       email: createdUser.email,
