@@ -1,6 +1,6 @@
 const multer = require('multer');
 const uuid = require('uuid/v1');
-const User = require('../models/user');
+const File = require('../models/file');
 const fs = require('fs');
 
 // const MIME_TYPE_MAP = {
@@ -13,21 +13,21 @@ const fileUpload = multer({
    limits: 500000,
    storage: multer.diskStorage({
       destination: (req, file, cb) => {
-         cb(null, 'uploads/' + req.userData.email + '/');
+         const path = 'uploads/' + req.userData.email + '/';
+         cb(null, path);
       },
       filename: (req, file, cb) => {
+         const path = 'uploads/' + req.userData.email + '/';
          const fileName = uuid() + '_' + file.originalname;
          cb(null, fileName);
-         User.findById(req.userData.userId)
-            .then((user) => {
-               user.store.push({
-                  path: '/uploads/' + req.userData.email + '/' + fileName,
-                  creation_date: Date(),
-                  structure: { type: 'png' },
-               });
+         const createdFile = new File({
+            path: path + fileName,
+            owner: req.userData.userId,
+            creation_date: new Date(),
+         });
 
-               return user.save();
-            })
+         createdFile
+            .save()
             .then((res) => {
                console.log(res);
             })
