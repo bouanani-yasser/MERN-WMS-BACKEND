@@ -6,19 +6,42 @@ const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
+const File = require('../models/file');
 
-const getUsers = async (req, res, next) => {
-   let users;
+const getFiles = async (req, res, next) => {
+   let files = null;
+   const userId = req.params.uid;
    try {
-      users = await User.find({}, '-password');
+      files = await File.find({ owner: userId });
    } catch (err) {
       const error = new HttpError(
          'Fetching users failed, please try again later.',
          500
       );
+      console.log('err' + err);
       return next(error);
    }
-   res.json({ users: users.map((user) => user.toObject({ getters: true })) });
+   res.json({ files: files.map((file) => file.toObject({ getters: true })) });
+};
+
+const search = async (req, res, next) => {
+   let files = null;
+   const userId = req.params.uid;
+   const query = req.params.query;
+   try {
+      files = await File.find({
+         owner: userId,
+         path: { $regex: query, $options: 'i' },
+      });
+   } catch (err) {
+      const error = new HttpError(
+         'Fetching users failed, please try again later.',
+         500
+      );
+      console.log('err' + err);
+      return next(error);
+   }
+   res.json({ files: files.map((file) => file.toObject({ getters: true })) });
 };
 
 const signup = async (req, res, next) => {
@@ -167,6 +190,7 @@ const login = async (req, res, next) => {
    });
 };
 
-exports.getUsers = getUsers;
 exports.signup = signup;
 exports.login = login;
+exports.getFiles = getFiles;
+exports.search = search;

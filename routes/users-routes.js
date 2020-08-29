@@ -20,6 +20,9 @@ router.post(
 
 router.post('/login', usersController.login);
 
+router.get('/:uid/files', usersController.getFiles);
+router.get('/:uid/files/:query', usersController.search);
+
 router.use(checkAuth);
 
 router.post('/upload', fileUpload.single('file'), (req, res) => {

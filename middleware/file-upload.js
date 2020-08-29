@@ -18,7 +18,7 @@ const fileUpload = multer({
       },
       filename: (req, file, cb) => {
          const path = 'uploads/' + req.userData.email + '/';
-         const fileName = uuid() + '_' + file.originalname;
+         const fileName = file.originalname;
          cb(null, fileName);
          const createdFile = new File({
             path: path + fileName,
