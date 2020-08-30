@@ -46,7 +46,10 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-   .connect('mongodb://localhost:27017/MERN-WMS')
+   // .connect('mongodb://localhost:27017/MERN-WMS')
+   .connect(
+      'mongodb+srv://yasser:nothing95@wms.rcfcb.mongodb.net/WMS?retryWrites=true&w=majority'
+   )
    .then(() => {
       app.listen(5000);
    })
