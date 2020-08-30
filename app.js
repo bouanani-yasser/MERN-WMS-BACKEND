@@ -51,7 +51,7 @@ mongoose
       'mongodb+srv://yasser:nothing95@wms.rcfcb.mongodb.net/WMS?retryWrites=true&w=majority'
    )
    .then(() => {
-      app.listen(precess.env.PORT || 5000);
+      app.listen(process.env.PORT || 5000);
    })
    .catch((err) => {
       console.log(err);
