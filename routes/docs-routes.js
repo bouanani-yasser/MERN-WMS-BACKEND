@@ -10,7 +10,7 @@ router.get('/:uid', docsController.getDocs);
 router.get('/download/:docid', docsController.downloadDoc);
 router.get('/search/:uid/:query', docsController.search);
 
-router.use(checkAuth);
+// router.use(checkAuth);
 
 router.delete('/remove/:docid', docsController.deleteDoc);
 
