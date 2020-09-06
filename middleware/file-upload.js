@@ -17,7 +17,6 @@ const fileUpload = multer({
       },
       filename: (req, file, cb) => {
          const fileName = file.originalname;
-         req.filename = fileName;
          cb(null, fileName);
       },
    }),

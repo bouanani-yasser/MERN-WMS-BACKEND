@@ -5,9 +5,9 @@ const fs = require('fs');
 const uploadDoc = (req, res) => {
    const str = JSON.parse(req.body.str);
    // const path = 'uploads/' + req.userData.email + '/';
-   const path = 'uploads/';
+   const path = 'uploads/' + req.file.originalname;
    const createdDoc = new Doc({
-      path: path + req.filename,
+      path: path,
       owner: req.userData.userId,
       creation_date: new Date(),
       structure: str,
