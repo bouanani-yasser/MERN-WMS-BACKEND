@@ -1,7 +1,5 @@
 const multer = require('multer');
-const uuid = require('uuid/v1');
-const File = require('../models/file');
-const fs = require('fs');
+// const uuid = require('uuid/v1');
 
 // const MIME_TYPE_MAP = {
 //    'image/png': 'png',
@@ -18,24 +16,9 @@ const fileUpload = multer({
          cb(null, path);
       },
       filename: (req, file, cb) => {
-         const path = 'uploads/' + req.userData.email + '/';
-         // const path = 'uploads/';
          const fileName = file.originalname;
+         req.filename = fileName;
          cb(null, fileName);
-         const createdFile = new File({
-            path: path + fileName,
-            owner: req.userData.userId,
-            creation_date: new Date(),
-         });
-
-         createdFile
-            .save()
-            .then((res) => {
-               console.log(res);
-            })
-            .catch((err) => {
-               console.log(err);
-            });
       },
    }),
    //  fileFilter: (req, file, cb) => {

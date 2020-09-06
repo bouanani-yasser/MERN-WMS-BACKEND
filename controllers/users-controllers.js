@@ -1,4 +1,4 @@
-var fs = require('fs');
+// var fs = require('fs');
 
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
@@ -6,43 +6,6 @@ const jwt = require('jsonwebtoken');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
-const File = require('../models/file');
-
-const getFiles = async (req, res, next) => {
-   let files = null;
-   const userId = req.params.uid;
-   try {
-      files = await File.find({ owner: userId });
-   } catch (err) {
-      const error = new HttpError(
-         'Fetching users failed, please try again later.',
-         500
-      );
-      console.log('err' + err);
-      return next(error);
-   }
-   res.json({ files: files.map((file) => file.toObject({ getters: true })) });
-};
-
-const search = async (req, res, next) => {
-   let files = null;
-   const userId = req.params.uid;
-   const query = req.params.query;
-   try {
-      files = await File.find({
-         owner: userId,
-         path: { $regex: query, $options: 'i' },
-      });
-   } catch (err) {
-      const error = new HttpError(
-         'Fetching users failed, please try again later.',
-         500
-      );
-      console.log('err' + err);
-      return next(error);
-   }
-   res.json({ files: files.map((file) => file.toObject({ getters: true })) });
-};
 
 const signup = async (req, res, next) => {
    const errors = validationResult(req);
@@ -115,10 +78,10 @@ const signup = async (req, res, next) => {
       return next(error);
    }
 
-   let dir = './uploads/' + createdUser.email;
-   if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-   }
+   // let dir = './uploads/' + createdUser.email;
+   // if (!fs.existsSync(dir)) {
+   //    fs.mkdirSync(dir);
+   // }
    res.status(201).json({
       userId: createdUser.id,
       email: createdUser.email,
@@ -192,5 +155,3 @@ const login = async (req, res, next) => {
 
 exports.signup = signup;
 exports.login = login;
-exports.getFiles = getFiles;
-exports.search = search;

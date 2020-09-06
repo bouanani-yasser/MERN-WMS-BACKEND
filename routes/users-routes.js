@@ -2,9 +2,6 @@ const express = require('express');
 const { check } = require('express-validator');
 
 const usersController = require('../controllers/users-controllers');
-const fileUpload = require('../middleware/file-upload');
-const checkAuth = require('../middleware/check-auth');
-const User = require('../models/user');
 
 const router = express.Router();
 
@@ -19,14 +16,5 @@ router.post(
 );
 
 router.post('/login', usersController.login);
-
-router.get('/:uid/files', usersController.getFiles);
-router.get('/:uid/files/:query', usersController.search);
-
-router.use(checkAuth);
-
-router.post('/upload', fileUpload.single('file'), (req, res) => {
-   return res.json({ file: req.file.originalname });
-});
 
 module.exports = router;
