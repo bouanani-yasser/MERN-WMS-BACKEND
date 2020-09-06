@@ -8,7 +8,7 @@ const uploadDoc = (req, res) => {
    const path = 'uploads/' + req.file.originalname;
    const createdDoc = new Doc({
       path: path,
-      // owner: req.userData.userId,
+      owner: req.userData.userId,
       creation_date: new Date(),
       structure: str,
    });
