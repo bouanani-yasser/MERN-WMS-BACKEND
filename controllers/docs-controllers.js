@@ -1,7 +1,6 @@
 const Doc = require('../models/document');
 const HttpError = require('../models/http-error');
 const fs = require('fs');
-const Path = require('path');
 
 const uploadDoc = (req, res) => {
    const str = JSON.parse(req.body.str);
