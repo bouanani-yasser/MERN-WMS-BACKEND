@@ -3,14 +3,14 @@ const HttpError = require('../models/http-error');
 const fs = require('fs');
 
 const uploadDoc = (req, res) => {
-   const str = JSON.parse(req.body.str);
+   // const str = JSON.parse(req.body.str);
    // const path = 'uploads/' + req.userData.email + '/';
    const path = 'uploads/' + req.file.originalname;
    const createdDoc = new Doc({
       path: path,
       owner: req.userData.userId,
       creation_date: new Date(),
-      structure: str,
+      // structure: str,
    });
    createdDoc
       .save()
@@ -19,6 +19,11 @@ const uploadDoc = (req, res) => {
       })
       .catch((err) => {
          console.log(err);
+         const error = new HttpError(
+            'Uploading failed, please try again later.',
+            500
+         );
+         return next(error);
       });
 
    return res.json({
