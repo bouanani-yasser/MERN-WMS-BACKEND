@@ -5,7 +5,7 @@ const fs = require('fs');
 const uploadDoc = (req, res) => {
    // const str = JSON.parse(req.body.str);
    // const path = 'uploads/' + req.userData.email + '/';
-   const path = 'uploads/' + req.file.originalname;
+   const path = 'uploads/file.pdf'; //+ req.file.originalname;
    const createdDoc = new Doc({
       path: path,
       owner: req.userData.userId,
@@ -27,7 +27,7 @@ const uploadDoc = (req, res) => {
       });
 
    return res.json({
-      file: req.file.originalname,
+      file: 'file', //req.file.originalname,
    });
 };
 
