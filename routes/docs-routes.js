@@ -14,6 +14,6 @@ router.use(checkAuth);
 
 router.delete('/remove/:docid', docsController.deleteDoc);
 
-router.post('/upload', docsController.uploadDoc);
+router.post('/upload', fileUpload.single('file'), docsController.uploadDoc);
 
 module.exports = router;

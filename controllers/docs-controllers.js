@@ -3,14 +3,14 @@ const HttpError = require('../models/http-error');
 const fs = require('fs');
 
 const uploadDoc = (req, res) => {
-   // const str = JSON.parse(req.body.str);
+   const str = JSON.parse(req.body.str);
    // const path = 'uploads/' + req.userData.email + '/';
-   const path = 'uploads/file.pdf'; //+ req.file.originalname;
+   const path = 'uploads/' + req.file.originalname;
    const createdDoc = new Doc({
       path: path,
       owner: req.userData.userId,
       creation_date: new Date(),
-      // structure: str,
+      structure: str,
    });
    createdDoc
       .save()
@@ -27,7 +27,7 @@ const uploadDoc = (req, res) => {
       });
 
    return res.json({
-      file: 'file', //req.file.originalname,
+      file: req.file.originalname,
    });
 };
 
