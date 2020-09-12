@@ -16,4 +16,6 @@ router.delete('/remove/:docid', docsController.deleteDoc);
 
 router.post('/upload', fileUpload.single('file'), docsController.uploadDoc);
 
+router.patch('/update/:docid', docsController.updateDoc);
+
 module.exports = router;

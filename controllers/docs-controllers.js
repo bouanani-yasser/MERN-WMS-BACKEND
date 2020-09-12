@@ -31,6 +31,26 @@ const uploadDoc = (req, res) => {
    });
 };
 
+const updateDoc = async (req, res) => {
+   const docId = req.params.docid;
+   const str = JSON.parse(req.body.str);
+   try {
+      const doc = await Doc.findById(docId);
+      doc.structure = str;
+      doc.save();
+      console.log('updating successfuly completed !!');
+   } catch (err) {
+      const error = new HttpError(
+         'Could not find that Doc, please try again later.',
+         500
+      );
+      console.log('err' + err);
+      return next(error);
+   }
+
+   res.status(200).json({ message: 'Updated Doc.' });
+};
+
 const getDocs = async (req, res, next) => {
    let Docs = null;
    const userId = req.params.uid;
@@ -124,3 +144,4 @@ exports.search = search;
 exports.uploadDoc = uploadDoc;
 exports.deleteDoc = deleteDoc;
 exports.downloadDoc = downloadDoc;
+exports.updateDoc = updateDoc;
