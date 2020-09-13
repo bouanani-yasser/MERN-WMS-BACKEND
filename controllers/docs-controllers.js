@@ -133,15 +133,19 @@ const downloadDoc = async (req, res, next) => {
    //    res.setHeader('Content-Disposition', 'inline');
    //    res.send(data);
    // });
-   try {
-      const file = fs.createReadStream(doc.path);
-   } catch (err) {
+
+   const file = fs.createReadStream(doc.path);
+
+   file.on('error', (err) => {
       return next(err);
-   }
-   const filename = doc.path.split('/')[1];
-   res.setHeader('Content-Type', 'multipart/form-data');
-   res.setHeader('Content-Disposition', 'attachment;filename=' + filename);
-   file.pipe(res);
+   });
+
+   file.on('open', () => {
+      const filename = doc.path.split('/')[1];
+      res.setHeader('Content-Type', 'multipart/form-data');
+      res.setHeader('Content-Disposition', 'attachment;filename=' + filename);
+      file.pipe(res);
+   });
 };
 exports.getDocs = getDocs;
 exports.search = search;
