@@ -133,7 +133,11 @@ const downloadDoc = async (req, res, next) => {
    //    res.setHeader('Content-Disposition', 'inline');
    //    res.send(data);
    // });
-   const file = fs.createReadStream(doc.path);
+   try {
+      const file = fs.createReadStream(doc.path);
+   } catch (err) {
+      return next(err);
+   }
    const filename = doc.path.split('/')[1];
    res.setHeader('Content-Type', 'multipart/form-data');
    res.setHeader('Content-Disposition', 'attachment;filename=' + filename);
