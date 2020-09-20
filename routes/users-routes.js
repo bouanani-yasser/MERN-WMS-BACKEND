@@ -14,7 +14,26 @@ router.post(
    ],
    usersController.signup
 );
+router.post(
+   '/add-user',
+   [
+      check('name').not().isEmpty(),
+      check('email').normalizeEmail().isEmail(),
+      check('password').isLength({ min: 6 }),
+   ],
+   usersController.registerUser
+);
+
+router.post(
+   '/update-user',
+   [check('name').not().isEmpty(), check('email').normalizeEmail().isEmail()],
+   usersController.updateUser
+);
 
 router.post('/login', usersController.login);
+
+router.get('/list/:uid', usersController.getUsersList);
+router.delete('/list/:uid', usersController.deleteUser);
+router.get('/:uid', usersController.getUserInfo);
 
 module.exports = router;

@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+
 const Schema = mongoose.Schema;
 
 const DocSchema = new Schema({
-   path: String,
-   owner: String,
+   path: { type: String, required: true },
+   owner: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
    creation_date: Date,
    structure: Array,
 });

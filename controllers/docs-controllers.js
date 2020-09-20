@@ -1,4 +1,5 @@
 const Doc = require('../models/document');
+const mongoose = require('mongoose');
 const HttpError = require('../models/http-error');
 const fs = require('fs');
 
