@@ -274,14 +274,12 @@ const deleteUser = async (req, res, next) => {
 
 const updateUser = async (req, res) => {
    const { id, name, email, role } = req.body;
-
    try {
       const user = await User.findById(id);
       user.name = name;
       user.email = email;
-      user.role = role;
+      user.role = role === 'user' ? role : 'admin';
       user.save();
-      console.log('updating successfully completed !!');
    } catch (err) {
       const error = new HttpError(
          'Could not find that Doc, please try again later.',
