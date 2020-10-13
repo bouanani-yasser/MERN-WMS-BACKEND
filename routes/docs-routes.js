@@ -14,8 +14,19 @@ router.use(checkAuth);
 
 router.delete('/remove/:docid', docsController.deleteDoc);
 
-router.post('/upload', fileUpload.single('file'), docsController.uploadDoc);
+router.post(
+   '/upload',
+   fileUpload.fields([
+      { name: 'doc', maxCount: 1 },
+      { name: 'str', maxCount: 1 },
+   ]),
+   docsController.uploadDoc
+);
 
-router.patch('/update/:docid', docsController.updateDoc);
+router.patch(
+   '/update/:docid',
+   fileUpload.single('str'),
+   docsController.updateDoc
+);
 
 module.exports = router;

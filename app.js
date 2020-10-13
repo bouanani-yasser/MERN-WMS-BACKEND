@@ -43,15 +43,17 @@ app.use((error, req, res, next) => {
    if (res.headerSent) {
       return next(error);
    }
-   res.status(error.code || 500);
+   // res.status(error.code || 500);
+   res.status(500);
+   console.log(error.message);
    res.json({ message: error.message || 'An unknown error occurred!' });
 });
 
 mongoose
-   // .connect('mongodb://localhost:27017/MERN-WMS')
-   .connect(
-      'mongodb+srv://yasser:nothing95@wms.rcfcb.mongodb.net/WMS?retryWrites=true&w=majority'
-   )
+   .connect('mongodb://localhost:27017/MERN-WMS')
+   // .connect(
+   //    'mongodb+srv://yasser:nothing95@wms.rcfcb.mongodb.net/WMS?retryWrites=true&w=majority'
+   // )
    .then(() => {
       app.listen(process.env.PORT || 5000);
    })

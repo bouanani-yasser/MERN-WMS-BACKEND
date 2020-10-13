@@ -1,55 +1,115 @@
 const Doc = require('../models/document');
-const mongoose = require('mongoose');
+const fs = require('fs'),
+   xml2js = require('xml2js');
 const HttpError = require('../models/http-error');
-const fs = require('fs');
+const { json } = require('body-parser');
+const { resolve } = require('path');
 
-const uploadDoc = (req, res) => {
-   const str = JSON.parse(req.body.str);
-   // const path = 'uploads/' + req.userData.email + '/';
-   const path = 'uploads/' + req.file.originalname;
-   const createdDoc = new Doc({
-      path: path,
-      owner: req.userData.userId,
-      creation_date: new Date(),
-      structure: str,
-   });
-   createdDoc
-      .save()
-      .then((res) => {
-         console.log(res);
-      })
-      .catch((err) => {
-         console.log(err);
-         const error = new HttpError(
-            'Uploading failed, please try again later.',
-            500
-         );
-         return next(error);
+const uploadDoc = async (req, res, next) => {
+   const desc = JSON.parse(req.body.desc);
+   const path = 'uploads/' + req.files.doc[0].originalname;
+   let jsonResult;
+   const parser = new xml2js.Parser();
+   if (req.files.str) {
+      fs.readFile(req.files.str[0].path, function (err, data) {
+         parser.parseString(data, function (err, result) {
+            jsonResult = JSON.stringify(result);
+            const createdDoc = new Doc({
+               path: path,
+               owner: req.userData.userId,
+               creation_date: new Date(),
+               description: desc,
+               structures: jsonResult,
+            });
+            createdDoc
+               .save()
+               .then((res) => {
+                  console.log(res);
+               })
+               .catch((err) => {
+                  console.log(err);
+                  const error = new HttpError(
+                     'Uploading failed, please try again later.',
+                     500
+                  );
+                  return next(error);
+               });
+
+            return res.json({
+               file: req.files.doc[0].originalname,
+            });
+         });
       });
+   } else {
+      const createdDoc = new Doc({
+         path: path,
+         owner: req.userData.userId,
+         creation_date: new Date(),
+         description: desc,
+      });
+      createdDoc
+         .save()
+         .then((res) => {
+            console.log(res);
+         })
+         .catch((err) => {
+            console.log(err);
+            const error = new HttpError(
+               'Uploading failed, please try again later.',
+               500
+            );
+            return next(error);
+         });
 
-   return res.json({
-      file: req.file.originalname,
-   });
+      return res.json({
+         file: req.files.doc[0].originalname,
+      });
+   }
 };
 
-const updateDoc = async (req, res) => {
+const updateDoc = async (req, res, next) => {
+   const parser = new xml2js.Parser();
    const docId = req.params.docid;
-   const str = JSON.parse(req.body.str);
-   try {
-      const doc = await Doc.findById(docId);
-      doc.structure = str;
-      doc.save();
-      console.log('updating successfuly completed !!');
-   } catch (err) {
-      const error = new HttpError(
-         'Could not find that Doc, please try again later.',
-         500
-      );
-      console.log('err' + err);
-      return next(error);
-   }
+   const desc = JSON.parse(req.body.desc);
+   if (req.file) {
+      fs.readFile(req.file.path, function (err, data) {
+         parser.parseString(data, async function (err, result) {
+            let str = JSON.stringify(result);
+            try {
+               const doc = await Doc.findById(docId);
+               doc.description = desc;
+               doc.structures.push(str);
+               doc.save();
+               console.log('updating successfully completed !!');
+            } catch (err) {
+               const error = new HttpError(
+                  'Could not find that Doc, please try again later.',
+                  500
+               );
+               console.log('err' + err);
+               return next(error);
+            }
 
-   res.status(200).json({ message: 'Updated Doc.' });
+            res.status(200).json({ message: 'Updated Doc.' });
+         });
+      });
+   } else {
+      try {
+         const doc = await Doc.findById(docId);
+         doc.description = desc;
+         doc.save();
+         console.log('updating successfully completed !!');
+      } catch (err) {
+         const error = new HttpError(
+            'Could not find that Doc, please try again later.',
+            500
+         );
+         console.log('err' + err);
+         return next(error);
+      }
+
+      res.status(200).json({ message: 'Updated Doc.' });
+   }
 };
 
 const getDocs = async (req, res, next) => {
