@@ -2,11 +2,9 @@ const Doc = require('../models/document');
 const fs = require('fs'),
    xml2js = require('xml2js');
 const HttpError = require('../models/http-error');
-const { json } = require('body-parser');
-const { resolve } = require('path');
 
 const uploadDoc = async (req, res, next) => {
-   const desc = JSON.parse(req.body.desc);
+   const desc = req.body.desc;
    const path = 'uploads/' + req.files.doc[0].originalname;
    let jsonResult;
    const parser = new xml2js.Parser();
@@ -70,7 +68,7 @@ const uploadDoc = async (req, res, next) => {
 const updateDoc = async (req, res, next) => {
    const parser = new xml2js.Parser();
    const docId = req.params.docid;
-   const desc = JSON.parse(req.body.desc);
+   const desc = req.body.desc;
    if (req.file) {
       fs.readFile(req.file.path, function (err, data) {
          parser.parseString(data, async function (err, result) {
@@ -135,8 +133,10 @@ const search = async (req, res, next) => {
    try {
       Docs = await Doc.find({
          owner: userId,
-         path: { $regex: query, $options: 'i' },
-      });
+      }).or([
+         { description: { $regex: query, $options: 'i' } },
+         { structures: { $elemMatch: { $regex: query, $options: 'i' } } },
+      ]);
    } catch (err) {
       const error = new HttpError(
          'Fetching users failed, please try again later.',
@@ -156,7 +156,7 @@ const deleteDoc = async (req, res, next) => {
       const doc = await Doc.findById(docId);
       path = doc.path;
       doc.remove();
-      console.log('deleting successfuly completed !!');
+      console.log('deleting successfully completed !!');
    } catch (err) {
       const error = new HttpError(
          'Could not find that Doc, please try again later.',

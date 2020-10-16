@@ -6,7 +6,7 @@ const DocSchema = new Schema({
    path: { type: String, required: true },
    owner: { type: mongoose.Types.ObjectId, required: true, ref: 'User' },
    creation_date: Date,
-   description: Array,
+   description: String,
    structures: Array,
 });
 
